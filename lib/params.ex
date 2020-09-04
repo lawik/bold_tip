@@ -63,7 +63,7 @@ defmodule BoldTip.Params do
         {[], type} ->
           # Simple object property with schema definition, get value according to schema type
           to_value(type, value)
-        {rest, nil} ->
+        {_rest, nil} ->
           # Complex value without schema definition
           raise "Encountered a nested field without a schema definition or custom value handling, not supported."
         {rest, "array"} ->
@@ -154,7 +154,14 @@ defmodule BoldTip.Params do
     |> Enum.map(fn {key, _value} ->
       action_string = String.replace_leading(key, start, "")
       [paramkey, action_name] = String.split(action_string, section_separator)
-      field_path = String.split(paramkey, separator)
+      field_path = paramkey
+      |> String.split(separator)
+      |> Enum.map(fn part ->
+        case Integer.parse(part) do
+          {num, ""} -> num
+          _ -> part
+        end
+      end)
       {field_path, action_name}
     end)
     # Simplify to map

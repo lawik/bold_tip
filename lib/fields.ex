@@ -284,7 +284,7 @@ defmodule BoldTip.Fields do
         {:ok, value} ->
           values = Field.set_value(field, fieldset.values, value)
           %{fieldset | values: values}
-        {:error, error_type, _reason} ->
+        {:error, _error_type, _reason} ->
           raise "error in custom value handling, please implement adding errors to fieldset"
       end
     end)
