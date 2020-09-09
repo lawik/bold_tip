@@ -370,11 +370,15 @@ defmodule BoldTip.Fields do
         if field.name == next do
           true
         else
-          case Integer.parse(next) do
-            {position, ""} ->
-              field.name == position
-            _ -> false
+          if is_integer(next) do
+            field.name == next
+          else
+            case Integer.parse(next) do
+              {position, ""} ->
+                field.name == position
+              _ -> false
             end
+          end
         end
       end)
 
