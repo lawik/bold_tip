@@ -27,9 +27,12 @@ defmodule BoldTip.Control.Label do
     leading_character = String.first(field_name)
     upper = String.upcase(leading_character)
     field_name = String.replace_prefix(field_name, leading_character, upper)
+
     Regex.split(~r/([A-Z][a-z]+)/, field_name, include_captures: true)
+    |> String.split("_")
     |> Enum.join(" ")
-    |> String.replace("UR Ls", "URLs") # Noice!
+    # Noice!
+    |> String.replace("UR Ls", "URLs")
     |> String.replace(~r/ +/, " ")
     |> String.trim()
   end
