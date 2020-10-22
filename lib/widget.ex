@@ -41,20 +41,9 @@ defmodule BoldTip.Widget do
       end
 
     widget_modules = get_widget_modules()
+
     if widget == "default" do
-      # Attempt to get a type-named widget
-      case get_in(widget_modules, [type, type]) do
-        nil ->
-          # Fall back to picking the first one
-          case Map.get(widget_modules, type, nil) do
-            nil -> nil
-            type_widgets ->
-              type_widgets
-              |> Enum.find(fn _ -> true end)
-              |> elem(1)
-          end
-        module -> module
-      end
+      get_default_widget(schema, schema_additions, widget_modules, type)
     else
       get_in(widget_modules, [type, widget])
     end
@@ -74,6 +63,48 @@ defmodule BoldTip.Widget do
 
   def handle_actions(module, fieldset, field) do
     apply(module, :actions, [fieldset, field])
+  end
+
+  defp get_default_widget(schema, schema_additions, widget_modules, type) do
+    # Get widget list for the right type
+    case Map.get(widget_modules, type, nil) do
+      # There is no widget that can fit the type
+      nil ->
+        nil
+
+      type_widgets ->
+        # Look for special cases that match before using defaults
+        case find_special_case(schema, schema_additions, type_widgets) do
+          nil ->
+            case get_in(widget_modules, [type, type]) do
+              nil ->
+                type_widgets
+                |> Enum.to_list()
+                |> hd()
+                |> elem(1)
+
+              module ->
+                module
+            end
+
+          widget ->
+            widget
+        end
+    end
+  end
+
+  defp find_special_case(schema, schema_additions, type_widgets) do
+    type_widgets
+    |> Enum.map(fn {_, widget} ->
+      widget
+    end)
+    |> Enum.find(nil, fn widget ->
+      if function_exported?(widget, :special_case, 2) do
+        widget.special_case(schema, schema_additions)
+      else
+        false
+      end
+    end)
   end
 
   defp determine_type(schema), do: Map.get(schema, "type", @default_type)

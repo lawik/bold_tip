@@ -12,15 +12,19 @@ defmodule BoldTip.Widget.Loader do
     Widget.List,
     Widget.RichText,
     Widget.String,
+    Widget.Select,
     Widget.Textarea
   ]
 
   def start_link(widget_modules \\ []) do
-    Agent.start_link(fn ->
-      @default_widgets ++ widget_modules
-      |> Enum.uniq()
-      |> Enum.reduce(%{}, &unpack_widget/2)
-    end, name: __MODULE__)
+    Agent.start_link(
+      fn ->
+        (@default_widgets ++ widget_modules)
+        |> Enum.uniq()
+        |> Enum.reduce(%{}, &unpack_widget/2)
+      end,
+      name: __MODULE__
+    )
   end
 
   def get_types do
