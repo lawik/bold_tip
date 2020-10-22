@@ -200,7 +200,7 @@ defmodule BoldTip.FieldsTest do
                               ],
                               [
                                 {"option", [{"value", "foo"}, {"selected", "selected"}], ["foo"]},
-                                {"option", [{"value", "foo"}], ["foo"]}
+                                {"option", [{"value", "bar"}], ["bar"]}
                               ]}
                            ]}
                         ]}

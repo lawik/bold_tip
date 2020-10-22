@@ -19,7 +19,7 @@ defmodule BoldTip.Widget.Select do
         id="<%= id(field.path, fieldset.options) %>"
         name="<%= name(field.path, fieldset.options) %>">
         <%= for option <- options do %>
-          <option value="<%= value %>" <%= selected(option, value) %>><%= value %></option>
+          <option value="<%= option %>" <%= selected(option, value) %>><%= option %></option>
         <% end %>
       </select>
     </div>
